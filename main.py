@@ -73,5 +73,6 @@ text = (
     f'{specSendRel1}\n'
     f'Рэйтинг - {rate}\n'
     f'{href}\n'
+    f'{href}\n'
 )
 #bot.send_message(chat_id, text)
