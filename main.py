@@ -60,8 +60,7 @@ print(specSend)
 specSend.remove('Гарантия производителя')
 print(specSend)
 specSendRel = ([s.replace('\n', '  ') for s in specSend])
-specSendRel1 = ([s.replace('Все характеристики', '  ') for s in specSend])
-print(specSendRel1)
+print(specSendRel)
 
 token = '5487512192:AAFMtEQCWG9zYWxlMYPh64IsAVkUA8WoLM8'
 bot = telebot.TeleBot(token)
@@ -75,4 +74,4 @@ text = (
     f'Рэйтинг - {rate}\n'
     f'{href}\n'
 )
-bot.send_message(chat_id, text)
+#bot.send_message(chat_id, text)
