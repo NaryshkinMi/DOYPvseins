@@ -3,7 +3,7 @@ import time
 from selenium import webdriver
 from selenium.webdriver.common.by import By
 from selenium.webdriver.chrome.service import Service
-
+import requests
 
 
 options = webdriver.ChromeOptions()
@@ -54,13 +54,16 @@ print(oldPrice)
 rate = driver.find_element(By.CLASS_NAME, "toggle").find_element(By.TAG_NAME, "meta").get_attribute("content")
 print(rate)
 
+articul = driver.find_element(By.CLASS_NAME, "product-code").find_element(By.CLASS_NAME, "value").text
+print(articul)
+
+images = driver.find_element(By.CLASS_NAME, "zoom").find_element(By.TAG_NAME, "img").get_attribute("src")
+#photo = images.get_attribute('src')
+print(images)
+
 specification = driver.find_elements(By.CLASS_NAME, "column-middle")
 specSend = [spec.text for spec in specification]
 print(specSend)
-specSend.remove('Гарантия производителя')
-print(specSend)
-specSendRel = ([s.replace('\n', '  ') for s in specSend])
-print(specSendRel)
 
 token = '5487512192:AAFMtEQCWG9zYWxlMYPh64IsAVkUA8WoLM8'
 bot = telebot.TeleBot(token)
