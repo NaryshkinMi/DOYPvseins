@@ -84,7 +84,7 @@ specp = ([s.replace('\n', '  ') for s in specSend])
 print(specp)
 #преобразуем список в строку
 specFun = (', '.join(specp))
-specTextMessage = specFun.replace("  ", "%0A")
+specTextMessage = specFun.replace("", "-")
 
 #работа с отправкой сообщения
 token = '5487512192:AAFMtEQCWG9zYWxlMYPh64IsAVkUA8WoLM8'
