@@ -60,6 +60,11 @@ print(articul)
 images = driver.find_element(By.CLASS_NAME, "zoom").find_element(By.TAG_NAME, "img").get_attribute("src")
 #photo = images.get_attribute('src')
 print(images)
+img = "img"
+photo = requests.get(images)
+photoOptions = open(img + '.jpg', 'wb')
+photoOptions.write(photo.content)
+photoOptions.close()
 
 specification = driver.find_elements(By.CLASS_NAME, "column-middle")
 specSend = [spec.text for spec in specification]
@@ -69,12 +74,14 @@ token = '5487512192:AAFMtEQCWG9zYWxlMYPh64IsAVkUA8WoLM8'
 bot = telebot.TeleBot(token)
 chat_id = '@pahingarage'
 text = (
-    f'{discription}.\n'
-    f'Заголовок {title}.\n'
-    f'Новая цена:  {newPrice}.\n'
+    #f'{discription}.\n'
+    f'*{title}*.\n'
+    f'*Новая цена*:  {newPrice}.\n'
     f'Старая цена: {oldPrice}\n'
     f'Рэйтинг - {rate}\n'
-    f'{href}\n'
-    f'{href}\n'
+    f'[Ссылка!]({href})\n'
+    #f'Арт:   {articul}\n'
 )
 #bot.send_message(chat_id, text)
+bot.send_photo(chat_id, caption=text,  photo=open('img.jpg', 'rb'), parse_mode="Markdown")
+
