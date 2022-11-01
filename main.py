@@ -67,7 +67,7 @@ bot = telebot.TeleBot(token)
 chat_id = '@pahingarage'
 text = (
     f'{discription}.\n'
-    f'{title}.\n'
+    f'Заголовок {title}.\n'
     f'Новая цена:  {newPrice}.\n'
     f'Старая цена: {oldPrice}\n'
     f'Рэйтинг - {rate}\n'
