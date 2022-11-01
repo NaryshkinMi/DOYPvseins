@@ -82,6 +82,9 @@ specp = specSend.remove('Гарантия производителя')
 print(specp)
 specp = ([s.replace('\n', '  ') for s in specSend])
 print(specp)
+#преобразуем список в строку
+specFun = (', '.join(specp))
+specTextMessage = specFun.replace("  ", "%0A")
 
 #работа с отправкой сообщения
 token = '5487512192:AAFMtEQCWG9zYWxlMYPh64IsAVkUA8WoLM8'
@@ -89,13 +92,14 @@ bot = telebot.TeleBot(token)
 chat_id = '@pahingarage'
 text = (
     #f'{discription}.\n'
-    f'*{title}*.\n'
-    f'*Новая цена*:  {newPrice}.\n'
+    f'*{title}*\n'
+    f'*Новая цена*:  {newPrice}\n'
     f'Старая цена: {oldPrice}\n'
     f'Рэйтинг - {rate}\n'
+    f'{specTextMessage}\n'
     f'[Ссылка!]({href})\n'
     #f'Арт:   {articul}\n'
 )
 #bot.send_message(chat_id, text)
-#bot.send_photo(chat_id, caption=text,  photo=open('img.jpg', 'rb'), parse_mode="Markdown")
+bot.send_photo(chat_id, caption=text,  photo=open('img.jpg', 'rb'), parse_mode="Markdown")
 
