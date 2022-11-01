@@ -12,7 +12,7 @@ options.add_experimental_option('useAutomationExtension', False)
 options.add_argument("--disable-blink-features=AutomationControlled")
 options.add_argument("start-maximized")
 
-s = Service("C:\\Users\\MECHVEEL\\PycharmProjects\\Instrymenturu\\chromedriver\\chromedriver.exe")
+s = Service("C:\\Users\\MECHVEEL\\PycharmProjects\\SeleniumParser\\webDriver\\chromedriver.exe")
 driver = webdriver.Chrome(options=options, service=s)
 
 url = "https://www.vseinstrumenti.ru/sales/price-falldown"
@@ -66,11 +66,10 @@ token = '5487512192:AAFMtEQCWG9zYWxlMYPh64IsAVkUA8WoLM8'
 bot = telebot.TeleBot(token)
 chat_id = '@pahingarage'
 text = (
-    #f'{discription}.\n'
+    f'{discription}.\n'
     f'{title}.\n'
     f'Новая цена:  {newPrice}.\n'
     f'Старая цена: {oldPrice}\n'
-    f'{specSendRel1}\n'
     f'Рэйтинг - {rate}\n'
     f'{href}\n'
     f'{href}\n'
