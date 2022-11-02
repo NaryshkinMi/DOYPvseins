@@ -4,6 +4,7 @@ from selenium import webdriver
 from selenium.webdriver.common.by import By
 from selenium.webdriver.chrome.service import Service
 import requests
+import sqlite3
 
 #Настройка драйвера
 options = webdriver.ChromeOptions()
@@ -24,6 +25,27 @@ discription = driver.find_element(By.CLASS_NAME, "month-action__description").fi
 title = driver.find_element(By.CLASS_NAME, "listing-grid").find_element(By.CLASS_NAME, "title").text
 href = driver.find_element(By.CLASS_NAME, "listing-grid").find_element(By.CLASS_NAME, "title").find_element(By.TAG_NAME, "a").get_attribute("href")
 firstArt = driver.find_element(By.CLASS_NAME, "wtis-id ").find_element(By.TAG_NAME, "span").text
+
+#Подключение к БД и проверка
+db = sqlite3.connect('vseinst.db')
+sql = db.cursor()
+sql.execute("""CREATE TABLE IF NOT EXISTS Articules (
+    Artic INT,
+    Name TEXT
+)""")
+db.commit()
+sql.execute(f"SELECT Artic FROM Articules WHERE Artic = '{firstArt}'")
+
+#Запись данных
+if sql.fetchone() is None:
+    sql.execute(f"INSERT INTO Articules VALUES (? , ?)", (firstArt, title))
+    db.commit()
+    print()
+else:
+    print("Такая запись уже есть")
+    for value in sql.execute("SELECT * FROM Articules"):
+        print(value)
+
 
 print("Получение первоначальой ссылки")
 print(discription)
@@ -85,7 +107,7 @@ print(specp)
 #преобразуем список в строку
 specFun = (', '.join(specp))
 specTextMessage = specFun.replace("  ", ", ")
-specTextMessage = specFun.replace("Все характеристики", ".")
+specTextMessage = specFun.replace("Все характеристики", "")
 
 #работа с отправкой сообщения
 token = '5487512192:AAFMtEQCWG9zYWxlMYPh64IsAVkUA8WoLM8'
