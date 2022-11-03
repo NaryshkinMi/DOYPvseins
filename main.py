@@ -27,6 +27,15 @@ while '1' == '1':
     href = driver.find_element(By.CLASS_NAME, "listing-grid").find_element(By.CLASS_NAME, "title").find_element(By.TAG_NAME, "a").get_attribute("href")
     firstArt = driver.find_element(By.CLASS_NAME, "wtis-id ").find_element(By.TAG_NAME, "span").text
 
+    allArt = driver.find_elements(By.XPATH, "//div[@class='wtis-id ']/span")
+    allArts = [spec.text for spec in allArt]
+    print(allArts)
+
+    allName = driver.find_elements(By.XPATH, "//div[@class='title']/a")
+    allNames = [spec.text for spec in allName]
+    print(allNames)
+    print("------------------------------------------------------------------------------------------------")
+
     #Подключение к БД и проверка
     db = sqlite3.connect('vseinst.db')
     sql = db.cursor()
@@ -46,13 +55,13 @@ while '1' == '1':
         for value in sql.execute("SELECT * FROM Articules"):
             print(value)
 
-
-    print("Получение первоначальой ссылки")
-    print(discription)
-    print(title)
-    print(firstArt)
+    print("------------------------------------------------------------------------------------------------")
+    #print("Получение первоначальой ссылки")
+    #print(discription)
+    #print(title)
+    #print(firstArt)
     print(href)
-
+    print("------------------------------------------------------------------------------------------------")
     #рандомная ссылка для сроса
     driver.get("https://intoli.com/blog/not-possible-to-block-chrome-headless/chrome-headless-test.html")
     time.sleep(3)
@@ -63,7 +72,7 @@ while '1' == '1':
     driver.switch_to.window(driver.window_handles[1])
     driver.get(href)
 
-    print("Сброс драйвера")
+    #сброс драйвера
     handle = driver.current_window_handle
     driver.service.stop()
     time.sleep(1)
@@ -97,17 +106,26 @@ while '1' == '1':
     photoOptions.close()
 
     #формирование описания
-    specification = driver.find_elements(By.CLASS_NAME, "column-middle")
-    specSend = [spec.text for spec in specification]
-    print(specSend)
+
+    #specification = driver.find_elements(By.CLASS_NAME, "column-middle")
+    #specSend = [spec.text for spec in specification]
+    #print(specSend)
     #specp = specSend.remove('Гарантия производителя')
     #print(specp)
-    specp = ([s.replace('\n', '  ') for s in specSend])
-    print(specp)
+    #specp = ([s.replace('\n', '  ') for s in specSend])
+    #print(specp)
     #преобразуем список в строку
-    specFun = (', '.join(specp))
-    specTextMessage = specFun.replace("  ", ", ")
-    specTextMessage = specFun.replace("Все характеристики", "")
+    #specFun = (', '.join(specp))
+    #specTextMessage = specFun.replace("  ", ", ")
+    #specTextMessage = specFun.replace("Все характеристики", "")
+
+    haracter = driver.find_elements(By.XPATH, "//ul[@class='product-features copy-checker']/li")
+    haracters = [i.text for i in haracter]
+    print(haracters)
+    haracteristics = str(haracters).strip('[]')
+    print(haracteristics)
+    print("------------------------------------------------------------------------------------------------")
+
 
     #работа с отправкой сообщения
     token = '5487512192:AAFMtEQCWG9zYWxlMYPh64IsAVkUA8WoLM8'
@@ -119,14 +137,14 @@ while '1' == '1':
         f'*Новая цена*:  {newPrice}\n'
         f'*Старая цена*: {oldPrice}\n'
         f'*Рэйтинг* - {rate}\n'
-        f'{specTextMessage}\n'
+        f'{haracteristics}\n'
         #f'[Ссылка!]({href})\n'
         #f'Арт:   {articul}\n'
     )
     #bot.send_message(chat_id, text)
-    bot.send_photo(chat_id, caption=text,  photo=open('img.jpg', 'rb'), parse_mode="Markdown")
+    #bot.send_photo(chat_id, caption=text,  photo=open('img.jpg', 'rb'), parse_mode="Markdown")
 
     # таймер срабатывания
     driver.close()
-    time.sleep(60)
+    time.sleep(500)
 
