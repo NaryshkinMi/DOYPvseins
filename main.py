@@ -27,6 +27,11 @@ while '1' == '1':
     href = driver.find_element(By.CLASS_NAME, "listing-grid").find_element(By.CLASS_NAME, "title").find_element(By.TAG_NAME, "a").get_attribute("href")
     firstArt = driver.find_element(By.CLASS_NAME, "wtis-id ").find_element(By.TAG_NAME, "span").text
 
+    hrefs = driver.find_elements(By.XPATH, "//div[@class='title']/a")
+    for hr in hrefs:
+        hrefAll = print(hr.get_attribute("href"))
+    print(hrefAll)
+
     allArt = driver.find_elements(By.XPATH, "//div[@class='wtis-id ']/span")
     allArts = [spec.text for spec in allArt]
     print(allArts)
@@ -37,18 +42,19 @@ while '1' == '1':
     print("------------------------------------------------------------------------------------------------")
 
     #Подключение к БД и проверка
-    db = sqlite3.connect('vseinst.db')
+    db = sqlite3.connect('vseinstrumentiru.db')
     sql = db.cursor()
     sql.execute("""CREATE TABLE IF NOT EXISTS Articules (
         Artic INT,
-        Name TEXT
+        Name TEXT,
+        href TEXT
     )""")
     db.commit()
     sql.execute(f"SELECT Artic FROM Articules WHERE Artic = '{firstArt}'")
 
     #Запись данных
     if sql.fetchone() is None:
-        sql.execute(f"INSERT INTO Articules VALUES (? , ?)", (firstArt, title))
+        sql.execute(f"INSERT INTO Articules VALUES (? , ?, ?)", (firstArt, title, href))
         db.commit()
     else:
         print("Такая запись уже есть")
@@ -125,7 +131,6 @@ while '1' == '1':
     haracteristics = str(haracters).strip('[]')
     print(haracteristics)
     print("------------------------------------------------------------------------------------------------")
-
 
     #работа с отправкой сообщения
     token = '5487512192:AAFMtEQCWG9zYWxlMYPh64IsAVkUA8WoLM8'
