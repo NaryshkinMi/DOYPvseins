@@ -5,6 +5,7 @@ from selenium.webdriver.common.by import By
 from selenium.webdriver.chrome.service import Service
 import requests
 import sqlite3
+
 while '1' == '1':
     #Настройка драйвера
     options = webdriver.ChromeOptions()
@@ -19,7 +20,6 @@ while '1' == '1':
     url = "https://www.vseinstrumenti.ru/sales/price-falldown"
     driver.get(url)
     time.sleep(3)
-
 
     #получение первоначальных данных
     discription = driver.find_element(By.CLASS_NAME, "month-action__description").find_element(By.TAG_NAME, "p").text
@@ -44,31 +44,48 @@ while '1' == '1':
     print("------------------------------------------------------------------------------------------------")
 
     #Подключение к БД и проверка
-    db = sqlite3.connect('vseinstrumentiru.db')
+    db = sqlite3.connect('hrefs_table.db')
     sql = db.cursor()
-    sql.execute("""CREATE TABLE IF NOT EXISTS Articules (
-        Artic INT,
-        Name TEXT,
-        href TEXT
+    sql.execute("""CREATE TABLE IF NOT EXISTS href_list (
+        Href TEXT
     )""")
-    db.commit()
-    sql.execute(f"SELECT Artic FROM Articules WHERE Artic = '{firstArt}'")
+
+    def commite(x):
+        sql.execute(f"INSERT INTO href_list VALUES ('{x}')")
+        print("Такой строки не было - добавляем")
+        db.commit()
+
+
+
+    for i in href_list:
+        sql.execute(f"SELECT Href FROM href_list WHERE Href = ('{i}')")
+        if sql.fetchone() is None:
+            commite(i)
+            totalhref = i
+            break
+        else:
+            print(f"Такая запись уже есть ('{i}')")
+
+    for value in sql.execute("SELECT * FROM href_list"):
+        print(value)
+
+    #sql.execute(f"SELECT Artic FROM Articules WHERE Artic = '{firstArt}'")
 
     #Запись данных
-    if sql.fetchone() is None:
-        sql.execute(f"INSERT INTO Articules VALUES (? , ?, ?)", (firstArt, title, href))
-        db.commit()
-    else:
-        print("Такая запись уже есть")
-        for value in sql.execute("SELECT * FROM Articules"):
-            print(value)
+    #if sql.fetchone() is None:
+       #sql.execute(f"INSERT INTO Articules VALUES (? , ?, ?)", (firstArt, title, href))
+        #db.commit()
+    #else:
+        #print("Такая запись уже есть")
+        #for value in sql.execute("SELECT * FROM Articules"):
+            #print(value)
 
     print("------------------------------------------------------------------------------------------------")
     #print("Получение первоначальой ссылки")
     #print(discription)
     #print(title)
     #print(firstArt)
-    print(href)
+    #print(href)
     print("------------------------------------------------------------------------------------------------")
     #рандомная ссылка для сроса
     driver.get("https://intoli.com/blog/not-possible-to-block-chrome-headless/chrome-headless-test.html")
@@ -85,7 +102,7 @@ while '1' == '1':
     driver.service.stop()
     time.sleep(1)
     driver = webdriver.Chrome(options=options, service=s)
-    driver.get(href)
+    driver.get(totalhref)
     time.sleep(10)
 
     #Получение новой цены
@@ -140,7 +157,7 @@ while '1' == '1':
     chat_id = '@pahingarage'
     text = (
         #f'{discription}.\n'
-        f'[{title}]({href})\n'
+        f'[{title}]({totalhref})\n'
         f'*Новая цена*:  {newPrice}\n'
         f'*Старая цена*: {oldPrice}\n'
         f'*Рэйтинг* - {rate}\n'
@@ -149,9 +166,10 @@ while '1' == '1':
         #f'Арт:   {articul}\n'
     )
     #bot.send_message(chat_id, text)
-    bot.send_photo(chat_id, caption=text,  photo=open('img.jpg', 'rb'), parse_mode="Markdown")
+    #bot.send_photo(chat_id, caption=text,  photo=open('img.jpg', 'rb'), parse_mode="Markdown")
 
     # таймер срабатывания
     driver.close()
-    time.sleep(500)
+    db.close()
+    time.sleep(60)
 
