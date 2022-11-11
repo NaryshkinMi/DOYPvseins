@@ -28,9 +28,11 @@ while '1' == '1':
     firstArt = driver.find_element(By.CLASS_NAME, "wtis-id ").find_element(By.TAG_NAME, "span").text
 
     hrefs = driver.find_elements(By.XPATH, "//div[@class='title']/a")
-    for hr in hrefs:
-        hrefAll = print(hr.get_attribute("href"))
-    print(hrefAll)
+    href_list = []
+    for h in hrefs:
+        hrefatib = h.get_attribute("href")
+        href_list.append(hrefatib)
+    print(href_list)
 
     allArt = driver.find_elements(By.XPATH, "//div[@class='wtis-id ']/span")
     allArts = [spec.text for spec in allArt]
@@ -147,7 +149,7 @@ while '1' == '1':
         #f'Арт:   {articul}\n'
     )
     #bot.send_message(chat_id, text)
-    #bot.send_photo(chat_id, caption=text,  photo=open('img.jpg', 'rb'), parse_mode="Markdown")
+    bot.send_photo(chat_id, caption=text,  photo=open('img.jpg', 'rb'), parse_mode="Markdown")
 
     # таймер срабатывания
     driver.close()
