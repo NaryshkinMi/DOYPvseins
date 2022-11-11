@@ -109,6 +109,10 @@ while '1' == '1':
     newPrice = driver.find_element(By.CLASS_NAME, "current-price").find_element(By.TAG_NAME, "span").text
     print(newPrice)
 
+    #Получение Наименования товара
+    totalName = driver.find_element(By.XPATH, "//div[@class='content-heading -product-card']/h1").text
+    print(totalName)
+
     #Получение старой цены
     oldPrice = driver.find_element(By.CLASS_NAME, "old-price").find_element(By.TAG_NAME, "span").text
     print(oldPrice)
@@ -157,7 +161,7 @@ while '1' == '1':
     chat_id = '@pahingarage'
     text = (
         #f'{discription}.\n'
-        f'[{title}]({totalhref})\n'
+        f'[{totalName}]({totalhref})\n'
         f'*Новая цена*:  {newPrice}\n'
         f'*Старая цена*: {oldPrice}\n'
         f'*Рэйтинг* - {rate}\n'
@@ -166,10 +170,12 @@ while '1' == '1':
         #f'Арт:   {articul}\n'
     )
     #bot.send_message(chat_id, text)
-    #bot.send_photo(chat_id, caption=text,  photo=open('img.jpg', 'rb'), parse_mode="Markdown")
+    bot.send_photo(chat_id, caption=text,  photo=open('img.jpg', 'rb'), parse_mode="Markdown")
 
     # таймер срабатывания
     driver.close()
+    db.commit()
     db.close()
-    time.sleep(60)
+
+    time.sleep(120)
 
