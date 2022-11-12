@@ -18,7 +18,7 @@ while '1' == '1':
 
     #Оновная ссылка
     url_bigam = "https://www.bigam.ru/catalog/recommended/"
-    url = "https://www.vseinstrumenti.ru/sales/price-falldown/"
+    url = "https://www.vseinstrumenti.ru/sales/price-falldown/?asc=DESC&orderby=month_sales_rating&office_id=&page=1#goods"
     driver.get(url)
     time.sleep(5)
     driver.execute_script("window.scrollTo(0, document.body.scrollHeight);")
@@ -29,20 +29,37 @@ while '1' == '1':
     href = driver.find_element(By.CLASS_NAME, "listing-grid").find_element(By.CLASS_NAME, "title").find_element(By.TAG_NAME, "a").get_attribute("href")
 
     #Получение всех ссылок на товары со старницы
-    hrefs = driver.find_elements(By.XPATH, "//div[@class='title']/a")
     href_list = []
-    for h in hrefs:
-        hrefatib = h.get_attribute("href")
-        href_list.append(hrefatib)
+    max_pages = 1
+    while max_pages < 3:
+        max_pages = max_pages + 1
+        iterable_url = f"https://www.vseinstrumenti.ru/sales/price-falldown/?asc=DESC&orderby=month_sales_rating&office_id=&page={max_pages}#goods"
+
+        # рандомная ссылка для сроса
+        driver.get("https://intoli.com/blog/not-possible-to-block-chrome-headless/chrome-headless-test.html")
+        time.sleep(3)
+
+        # Открытие новго окна
+        driver.execute_script("window.open("");")
+        # Переключение
+        driver.switch_to.window(driver.window_handles[1])
+        driver.get(iterable_url)
+
+        # сброс драйвера
+        handle = driver.current_window_handle
+        driver.service.stop()
+        time.sleep(1)
+        driver = webdriver.Chrome(options=options, service=s)
+        driver.get(iterable_url)
+
+        time.sleep(4)
+        hrefs = driver.find_elements(By.XPATH, "//div[@class='title']/a")
+        for h in hrefs:
+            hrefatib = h.get_attribute("href")
+            href_list.append(hrefatib)
+
+
     print(href_list)
-
-    hrefs_pages = driver.find_elements(By.XPATH, "//a[@class='page-link']")
-    hrefs_pages_list = []
-    for p in hrefs_pages:
-        pagesatrib = p.get_attribute("href")
-        hrefs_pages_list.append(pagesatrib)
-    print(hrefs_pages_list)
-
     print("------------------------------------------------------------------------------------------------")
 
     #Получение всех артикулей
