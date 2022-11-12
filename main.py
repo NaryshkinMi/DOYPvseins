@@ -13,19 +13,20 @@ while '1' == '1':
     options.add_experimental_option('useAutomationExtension', False)
     options.add_argument("--disable-blink-features=AutomationControlled")
     options.add_argument("start-maximized")
-
-
     s = Service("C:\\Users\\MECHVEEL\\PycharmProjects\\SeleniumParser\\webDriver\\chromedriver.exe")
     driver = webdriver.Chrome(options=options, service=s)
 
-    url = "https://www.vseinstrumenti.ru/sales/black-friday/"
+    #Оновная ссылка
+    url_bigam = "https://www.bigam.ru/catalog/recommended/"
+    url = "https://www.vseinstrumenti.ru/sales/price-falldown/"
     driver.get(url)
-    time.sleep(3)
+    time.sleep(5)
+    driver.execute_script("window.scrollTo(0, document.body.scrollHeight);")
+
+
 
     #получение первоначальных данных
-    title = driver.find_element(By.CLASS_NAME, "listing-grid").find_element(By.CLASS_NAME, "title").text
     href = driver.find_element(By.CLASS_NAME, "listing-grid").find_element(By.CLASS_NAME, "title").find_element(By.TAG_NAME, "a").get_attribute("href")
-    firstArt = driver.find_element(By.CLASS_NAME, "wtis-id ").find_element(By.TAG_NAME, "span").text
 
     #Получение всех ссылок на товары со старницы
     hrefs = driver.find_elements(By.XPATH, "//div[@class='title']/a")
@@ -34,6 +35,15 @@ while '1' == '1':
         hrefatib = h.get_attribute("href")
         href_list.append(hrefatib)
     print(href_list)
+
+    hrefs_pages = driver.find_elements(By.XPATH, "//a[@class='page-link']")
+    hrefs_pages_list = []
+    for p in hrefs_pages:
+        pagesatrib = p.get_attribute("href")
+        hrefs_pages_list.append(pagesatrib)
+    print(hrefs_pages_list)
+
+    print("------------------------------------------------------------------------------------------------")
 
     #Получение всех артикулей
     allArt = driver.find_elements(By.XPATH, "//div[@class='wtis-id ']/span")
