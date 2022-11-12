@@ -14,19 +14,20 @@ while '1' == '1':
     options.add_argument("--disable-blink-features=AutomationControlled")
     options.add_argument("start-maximized")
 
+
     s = Service("C:\\Users\\MECHVEEL\\PycharmProjects\\SeleniumParser\\webDriver\\chromedriver.exe")
     driver = webdriver.Chrome(options=options, service=s)
 
-    url = "https://www.vseinstrumenti.ru/sales/price-falldown"
+    url = "https://www.vseinstrumenti.ru/sales/black-friday/"
     driver.get(url)
     time.sleep(3)
 
     #получение первоначальных данных
-    discription = driver.find_element(By.CLASS_NAME, "month-action__description").find_element(By.TAG_NAME, "p").text
     title = driver.find_element(By.CLASS_NAME, "listing-grid").find_element(By.CLASS_NAME, "title").text
     href = driver.find_element(By.CLASS_NAME, "listing-grid").find_element(By.CLASS_NAME, "title").find_element(By.TAG_NAME, "a").get_attribute("href")
     firstArt = driver.find_element(By.CLASS_NAME, "wtis-id ").find_element(By.TAG_NAME, "span").text
 
+    #Получение всех ссылок на товары со старницы
     hrefs = driver.find_elements(By.XPATH, "//div[@class='title']/a")
     href_list = []
     for h in hrefs:
@@ -34,10 +35,12 @@ while '1' == '1':
         href_list.append(hrefatib)
     print(href_list)
 
+    #Получение всех артикулей
     allArt = driver.find_elements(By.XPATH, "//div[@class='wtis-id ']/span")
     allArts = [spec.text for spec in allArt]
     print(allArts)
 
+    #Получение всех наименований
     allName = driver.find_elements(By.XPATH, "//div[@class='title']/a")
     allNames = [spec.text for spec in allName]
     print(allNames)
@@ -50,13 +53,13 @@ while '1' == '1':
         Href TEXT
     )""")
 
+    #Функция записи новой ссылки в БД
     def commite(x):
         sql.execute(f"INSERT INTO href_list VALUES ('{x}')")
         print("Такой строки не было - добавляем")
         db.commit()
 
-
-
+    #цикл проверки наличия записи в БД
     for i in href_list:
         sql.execute(f"SELECT Href FROM href_list WHERE Href = ('{i}')")
         if sql.fetchone() is None:
@@ -66,27 +69,11 @@ while '1' == '1':
         else:
             print(f"Такая запись уже есть ('{i}')")
 
+    #вывод таблицы со всеми ссылками(убрать)
     for value in sql.execute("SELECT * FROM href_list"):
         print(value)
-
-    #sql.execute(f"SELECT Artic FROM Articules WHERE Artic = '{firstArt}'")
-
-    #Запись данных
-    #if sql.fetchone() is None:
-       #sql.execute(f"INSERT INTO Articules VALUES (? , ?, ?)", (firstArt, title, href))
-        #db.commit()
-    #else:
-        #print("Такая запись уже есть")
-        #for value in sql.execute("SELECT * FROM Articules"):
-            #print(value)
-
     print("------------------------------------------------------------------------------------------------")
-    #print("Получение первоначальой ссылки")
-    #print(discription)
-    #print(title)
-    #print(firstArt)
-    #print(href)
-    print("------------------------------------------------------------------------------------------------")
+
     #рандомная ссылка для сроса
     driver.get("https://intoli.com/blog/not-possible-to-block-chrome-headless/chrome-headless-test.html")
     time.sleep(3)
@@ -135,19 +122,6 @@ while '1' == '1':
     photoOptions.close()
 
     #формирование описания
-
-    #specification = driver.find_elements(By.CLASS_NAME, "column-middle")
-    #specSend = [spec.text for spec in specification]
-    #print(specSend)
-    #specp = specSend.remove('Гарантия производителя')
-    #print(specp)
-    #specp = ([s.replace('\n', '  ') for s in specSend])
-    #print(specp)
-    #преобразуем список в строку
-    #specFun = (', '.join(specp))
-    #specTextMessage = specFun.replace("  ", ", ")
-    #specTextMessage = specFun.replace("Все характеристики", "")
-
     haracter = driver.find_elements(By.XPATH, "//ul[@class='product-features copy-checker']/li")
     haracters = [i.text for i in haracter]
     print(haracters)
@@ -160,22 +134,20 @@ while '1' == '1':
     bot = telebot.TeleBot(token)
     chat_id = '@pahingarage'
     text = (
-        #f'{discription}.\n'
+        f'*Все инструменты!*\n'
         f'[{totalName}]({totalhref})\n'
         f'*Новая цена*:  {newPrice}\n'
         f'*Старая цена*: {oldPrice}\n'
         f'*Рэйтинг* - {rate}\n'
         f'{haracteristics}\n'
-        #f'[Ссылка!]({href})\n'
-        #f'Арт:   {articul}\n'
     )
-    #bot.send_message(chat_id, text)
+
+    #отправка сообщения
     bot.send_photo(chat_id, caption=text,  photo=open('img.jpg', 'rb'), parse_mode="Markdown")
 
     # таймер срабатывания
     driver.close()
     db.commit()
     db.close()
-
     time.sleep(120)
 
